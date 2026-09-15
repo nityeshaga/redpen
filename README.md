@@ -64,7 +64,7 @@ render html: helpers.redpen_inject(document).html_safe, layout: false
 
 ## Restyling
 
-Every colour and font is a CSS variable (`--rp-paper`, `--rp-red`, `--rp-mono`, …) on `:root`; override them after `redpen.css`. For deeper changes, `bin/rails generate redpen:views` copies the templates into `app/views/redpen/notes`, where they take precedence.
+Every colour and font is a CSS variable (`--rp-paper`, `--rp-red`, `--rp-mono`, …). Set them on `:root` in your own stylesheet; the gem's defaults sit in a cascade layer, so yours win whatever the load order. For deeper changes, `bin/rails generate redpen:views` copies the templates into `app/views/redpen/notes`, where they take precedence.
 
 ## Pins that survive rewrites
 

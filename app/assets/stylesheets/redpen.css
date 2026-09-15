@@ -1,8 +1,10 @@
-/* The red pen. Carries its own tokens and never leans on the host's stylesheet; a host
-   restyles it by overriding the --rp-* variables (on :root, after this file). Everything
-   sits above the page (z-index) and outside its flow (display: contents on the frame). */
+/* The red pen. Carries its own tokens and never leans on the host's stylesheet. The
+   defaults live in a cascade layer, so a host's own `:root { --rp-red: ... }` wins no
+   matter which stylesheet loads last. Everything sits above the page (z-index) and
+   outside its flow (display: contents on the frame). */
 
-:root {
+@layer redpen {
+  :root {
   --rp-paper: #fbf6ea;
   --rp-paper-deep: #efe6d2;
   --rp-ink: #2b2620;
@@ -13,6 +15,7 @@
   --rp-mono: ui-monospace, Menlo, Consolas, monospace;
   --rp-shadow: 0 6px 24px rgba(43, 38, 32, .22);
   --rp-radius: 8px;
+  }
 }
 
 .redpen { display: contents; }
