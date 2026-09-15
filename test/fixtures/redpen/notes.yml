@@ -1,0 +1,29 @@
+intro:
+  author: nityesh (User)
+  path: /pages/about
+  selector: "#page > p:nth-of-type(1)"
+  snippet: "The first paragraph of the page, which someone may want shorter."
+  body: "This runs long. One sentence."
+
+moved:
+  author: nityesh (User)
+  path: /pages/about
+  selector: "#page > div:nth-of-type(4) > p:nth-of-type(9)"
+  snippet: "The second paragraph, which nobody minds."
+  body: "The selector is stale; the snippet still finds it."
+
+headline:
+  author: piyush (User)
+  path: /pages/about
+  selector: "#page > h1"
+  snippet: "Page about"
+  body: "Bigger."
+  resolved_at: <%= 1.day.ago.iso8601 %>
+  resolution: "Bumped to 48px."
+
+private:
+  author: nityesh (User)
+  path: /pages/private
+  selector: "#page > h1"
+  snippet: "Page private"
+  body: "Nobody may see this through the pen."

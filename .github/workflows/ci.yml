@@ -1,0 +1,28 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        gemfile: [Gemfile, gemfiles/sprockets.gemfile]
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+      - run: bin/rails db:migrate
+      - run: bin/rails test
+      - run: bin/rails test test/system
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshots-${{ strategy.job-index }}
+          path: test/dummy/tmp/screenshots
+          if-no-files-found: ignore

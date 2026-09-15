@@ -1,0 +1,9 @@
+<%# The red pen. The frame pulls the page's notes after the page paints, so the page
+    itself carries only this: a stylesheet link, a module tag, an empty frame. The
+    controller lives on the frame, which survives every re-render of its contents. %>
+<%= stylesheet_link_tag "redpen" %>
+<%= javascript_import_module_tag "redpen" %>
+<turbo-frame id="redpen_notes" src="<%= redpen.notes_path(path: path) %>" class="redpen"
+             data-controller="redpen"
+             data-action="turbo:frame-load->redpen#pin resize@window->redpen#pin keydown@document->redpen#keydown">
+</turbo-frame>

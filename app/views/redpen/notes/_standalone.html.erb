@@ -1,0 +1,6 @@
+<%# Spliced before </body> of a verbatim document. It has no head of ours, so the rail
+    brings the import map along, and Turbo Drive is switched off: the document's links
+    and scripts were written for a plain browser, and the frame works without Drive. %>
+<%= javascript_inline_importmap_tag %>
+<script type="module">import { Turbo } from "@hotwired/turbo-rails"; Turbo.session.drive = false</script>
+<%= render "redpen/notes/rail", path: path %>

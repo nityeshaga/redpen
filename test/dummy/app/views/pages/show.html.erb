@@ -1,0 +1,6 @@
+<main id="page">
+  <h1>Page <%= @slug %></h1>
+  <p class="intro">The first paragraph of the page, which someone may want shorter.</p>
+  <p>The second paragraph, which nobody minds.</p>
+  <% if signed_in? %><p class="who">Signed in as <%= Current.user.name %></p><% end %>
+</main>

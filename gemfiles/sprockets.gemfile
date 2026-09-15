@@ -1,0 +1,14 @@
+source "https://rubygems.org"
+
+gemspec path: ".."
+
+gem "puma"
+gem "sqlite3", ">= 2.1"
+gem "sprockets-rails"
+
+group :test do
+  gem "capybara"
+  gem "selenium-webdriver"
+end
+
+gem "json", "< 3"

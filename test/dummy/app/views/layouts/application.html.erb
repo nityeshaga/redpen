@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dummy</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body style="min-height: 100vh; margin: 0">
+    <%= yield %>
+    <%= redpen_rail if signed_in? %>
+  </body>
+</html>
