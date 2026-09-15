@@ -5,16 +5,16 @@
 
 @layer redpen {
   :root {
-  --rp-paper: #fbf6ea;
-  --rp-paper-deep: #efe6d2;
-  --rp-ink: #2b2620;
-  --rp-ink-soft: #5c5347;
-  --rp-line: #d9cdb4;
-  --rp-red: #b05c34;
-  --rp-red-deep: #96491f;
-  --rp-mono: ui-monospace, Menlo, Consolas, monospace;
-  --rp-shadow: 0 6px 24px rgba(43, 38, 32, .22);
-  --rp-radius: 8px;
+    --rp-paper: #fbf6ea;
+    --rp-paper-deep: #efe6d2;
+    --rp-ink: #2b2620;
+    --rp-ink-soft: #5c5347;
+    --rp-line: #d9cdb4;
+    --rp-red: #b05c34;
+    --rp-red-deep: #96491f;
+    --rp-mono: ui-monospace, Menlo, Consolas, monospace;
+    --rp-shadow: 0 6px 24px rgba(43, 38, 32, .22);
+    --rp-radius: 8px;
   }
 }
 
