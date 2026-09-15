@@ -6,3 +6,4 @@ gemfiles/*.lock
 /test/dummy/storage/
 /test/dummy/tmp/
 /test/dummy/db/*.sqlite3*
+*.gem
