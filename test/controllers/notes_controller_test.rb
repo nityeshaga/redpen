@@ -3,10 +3,24 @@ require "test_helper"
 class Redpen::NotesControllerTest < ActionDispatch::IntegrationTest
   setup { sign_in_as users(:nityesh) }
 
-  test "nobody signed in, nothing served" do
+  test "signed out, the host's own sign-in redirect fires, naming a host route" do
     delete "/session"
     get redpen.notes_url(path: "/pages/about")
+    assert_redirected_to "/session/new"
+  end
+
+  test "the host's route helpers are delegated; the engine's own are not" do
+    assert_includes Redpen::HostRouteHelpers.instance_methods, :new_session_path
+    assert_includes Redpen::HostRouteHelpers.instance_methods, :page_path
+    assert_not_includes Redpen::HostRouteHelpers.instance_methods, :notes_path
+  end
+
+  test "no author, nothing served" do
+    Redpen.author = -> { nil }
+    get redpen.notes_url(path: "/pages/about")
     assert_response :forbidden
+  ensure
+    Redpen.author = -> { Current.user }
   end
 
   test "a path the host says is off limits is off limits" do

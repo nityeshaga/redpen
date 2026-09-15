@@ -3,6 +3,7 @@ require "turbo-rails"
 require "stimulus-rails"
 
 require "redpen/version"
+require "redpen/host_route_helpers"
 require "redpen/engine"
 
 # The red pen asks the host app two questions and nothing else. Both lambdas run inside

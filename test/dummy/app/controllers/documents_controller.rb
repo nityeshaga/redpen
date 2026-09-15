@@ -1,5 +1,8 @@
 # Documents served verbatim, with their own <head>: the rail is spliced in for signed-in users.
 class DocumentsController < ApplicationController
+  allow_unauthenticated_access
+  before_action :resume_session
+
   DOCUMENTS = {
     "verbatim" => <<~HTML,
       <!DOCTYPE html>

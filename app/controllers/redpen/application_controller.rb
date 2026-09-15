@@ -4,6 +4,8 @@ module Redpen
   # once, about that path. Reads are by path, never by author: two admins of one page
   # see the same notes.
   class ApplicationController < Redpen.parent_controller.constantize
+    include HostRouteHelpers
+
     # The index answers a <turbo-frame> inside the host's page; a layout would nest one.
     layout false
 

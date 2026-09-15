@@ -18,6 +18,13 @@ module Redpen
       end
     end
 
+    # The host's own route helpers keep working inside the engine's controllers.
+    initializer "redpen.host_route_helpers" do |app|
+      ActiveSupport.on_load(:after_routes_loaded) do
+        Redpen::HostRouteHelpers.define_from(app.routes, Redpen::Engine.routes)
+      end
+    end
+
     # `redpen_rail` and `redpen_inject` in every host view and controller.
     initializer "redpen.helpers" do
       ActiveSupport.on_load(:action_controller_base) { helper Redpen::RailHelper }
