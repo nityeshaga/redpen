@@ -25,8 +25,12 @@ module Redpen
       end
     end
 
-    # `redpen_rail` and `redpen_inject` in every host view and controller.
-    initializer "redpen.helpers" do
+    # `redpen_rail` and `redpen_inject` in every host view and controller. Not an
+    # initializer: a host that loads ActionController::Base at boot (an initializer
+    # referencing it, a lib required from application.rb) would fire the hook before
+    # the autoloader exists, and Redpen::RailHelper would not resolve. to_prepare runs
+    # once the autoloader is up, and again on every reload in development.
+    config.to_prepare do
       ActiveSupport.on_load(:action_controller_base) { helper Redpen::RailHelper }
     end
   end
