@@ -66,6 +66,20 @@ class Redpen::NotesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to redpen.notes_url(path: "/pages/about")
   end
 
+  test "create asks the gate about the note's own path, not a path named in the query" do
+    assert_no_difference -> { Redpen::Note.count } do
+      post redpen.notes_url(path: "/pages/about"), params: { note: { path: "/pages/private", selector: "body", body: "Planted." } }
+    end
+    assert_response :forbidden
+  end
+
+  test "destroy asks the gate about the note's own path, not a path named in the query" do
+    assert_no_difference -> { Redpen::Note.count } do
+      delete redpen.note_url(redpen_notes(:private), path: "/pages/about")
+    end
+    assert_response :forbidden
+  end
+
   test "resolve and reopen are create and destroy on the resolution" do
     note = redpen_notes(:intro)
     post redpen.note_resolution_url(note), params: { resolution: "Done." }

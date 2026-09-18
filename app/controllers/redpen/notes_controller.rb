@@ -26,8 +26,15 @@ module Redpen
         @note ||= Note.find(params[:id])
       end
 
+      # The page the gate is asked about is the page this request reads or writes: the
+      # query's path for the index, the note's own path for create and destroy. Taking it
+      # from anywhere else would let a request pass the gate for one page and land on another.
       def path
-        @path ||= params[:path].presence || params.dig(:note, :path).presence || note.path
+        @path ||= case action_name
+          when "index"  then params[:path]
+          when "create" then note_params[:path]
+          else note.path
+        end
       end
 
       def note_params
