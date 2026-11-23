@@ -20,9 +20,10 @@ class RedpenController extends Controller {
     this.hover = this.hover.bind(this)
     this.capture = this.capture.bind(this)
     // history.replaceState moves the fragment without an event, but a router that calls it
-    // has just redrawn the page, so the redraw is the event.
+    // has just redrawn the page, so the redraw is the event. A redraw is also when an
+    // element that wasn't there yet arrives: a page that draws itself after the notes load.
     this.pinnedAt = this.fragment
-    this.redraws = new MutationObserver(() => { if (this.fragment !== this.pinnedAt) this.pin() })
+    this.redraws = new MutationObserver(records => { if (this.stale && this.redrawn(records)) this.pin() })
     this.redraws.observe(document.body, { childList: true, subtree: true })
   }
 
@@ -37,11 +38,12 @@ class RedpenController extends Controller {
     if (!this.hasLayerTarget) return
     this.layerTarget.querySelectorAll(".redpen-pin").forEach(pin => pin.remove())
     const orphanList = this.orphansTarget.querySelector("ol")
-    orphanList.replaceChildren()
 
+    // Every note is sorted afresh, the orphans of the last pin() included: an element
+    // that was gone may be back. In the order they were written, which their ids keep.
     this.pinnedAt = this.fragment
     let number = 0
-    for (const note of this.noteTargets) {
+    for (const note of this.noteTargets.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }))) {
       if (!this.here(note)) { this.notesTarget.appendChild(note); note.removeAttribute("data-open"); continue }
       const element = this.resolve(note.dataset.noteSelector, note.dataset.noteSnippet)
       note.querySelector(".redpen-note__number").textContent = ++number
@@ -67,6 +69,17 @@ class RedpenController extends Controller {
     pin.style.top = `${y - 12}px`
     pin.addEventListener("click", event => { event.stopPropagation(); this.open(note, pin) })
     return pin
+  }
+
+  // The pins are out of date when the page has moved to another fragment, or when a note
+  // is waiting for its element.
+  get stale() {
+    return this.fragment !== this.pinnedAt || this.orphansTarget.hasAttribute("data-populated")
+  }
+
+  // The page's own redraws, not ours: pin() moves notes and pins about inside the frame.
+  redrawn(records) {
+    return records.some(record => !this.element.contains(record.target))
   }
 
   // A note with no fragment belongs to the whole path; one with a fragment, to that view of it.

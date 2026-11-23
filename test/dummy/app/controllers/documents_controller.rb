@@ -11,7 +11,8 @@ class DocumentsController < ApplicationController
     HTML
     "bare" => "<p>A fragment with no body tag at all.</p>",
     # Two slides on one path, routed in the fragment the way a deck engine does it:
-    # redraw, then history.replaceState, which fires no event.
+    # redraw, then history.replaceState, which fires no event. The first slide is drawn
+    # late, after the notes have loaded, the way a deck that fetches its slides is.
     "deck" => <<~HTML
       <!DOCTYPE html>
       <html><head><title>Deck</title></head>
@@ -24,7 +25,7 @@ class DocumentsController < ApplicationController
           history.replaceState(null, "", location.pathname + "#/" + name)
         }
         document.getElementById("next").addEventListener("click", () => show(location.hash === "#/one" ? "two" : "one"))
-        show(location.hash === "#/two" ? "two" : "one")
+        setTimeout(() => show(location.hash === "#/two" ? "two" : "one"), 400)
       </script>
       </body></html>
     HTML

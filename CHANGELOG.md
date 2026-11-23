@@ -4,6 +4,8 @@
 
 **Notes on pages that route in the fragment.** A slide deck at `/deck/#/tcp/4` is many pages on one path, and the server never sees which: every note on it was stored against `/deck/`, and every slide showed every pin. The pen now sends the fragment with the note (`redpen_notes.fragment`, null for ordinary pages) and pins a note only while the page is at it. A fragment that names an element (`#footnotes`) is a scroll position and is not recorded. Pins are re-measured when the fragment changes, including by `history.replaceState`, and again when an entrance animation ends. `Note#location` is the path with its fragment, for hosts that link back to a note. Found on nityesh.com's explorables.
 
+**Pins on pages that draw themselves late.** A note whose element was not on the page yet when the notes loaded sat in "Element gone" until the window was resized, and the next `pin()` then dropped it from the page altogether. Orphans are now sorted afresh on every `pin()`, and while a note is waiting for its element the page's own redraws pin again.
+
 **Upgrading:** `bin/rails redpen:install:migrations && bin/rails db:migrate`. A host that copied the views with `redpen:views` should add the hidden `fragment` field to `_form.html.erb` and `data-note-fragment` to `_note.html.erb`; without them the pen behaves as it did in 0.1.
 
 ## 0.1.2 — 2026-09-18

@@ -81,6 +81,29 @@ class PenTest < ApplicationSystemTestCase
     assert_selector ".redpen-note[data-open]", text: "Open with the question."
   end
 
+  test "a slide drawn after the notes load still gets its pin, and the note is not lost" do
+    visit document_path("deck", anchor: "/two")
+    page.refresh
+    assert_selector "h1", text: "Slide two"
+    assert_selector ".redpen-pin", count: 1
+    assert_no_selector ".redpen-orphans[data-populated]"
+
+    page.driver.browser.manage.window.resize_to(1100, 800)
+    assert_selector ".redpen-pin", count: 1
+    find(".redpen-pin").click
+    assert_selector ".redpen-note[data-open]", text: "Say it shorter."
+  end
+
+  test "an orphan survives being pinned again" do
+    Redpen::Note.create!(author: users(:nityesh), path: "/pages/about", selector: "#page > blockquote:nth-of-type(1)",
+                         snippet: "Text that is nowhere on this page any more.", body: "Gone.")
+    visit page_path("about")
+    assert_selector ".redpen-orphans[data-populated] .redpen-note", text: "Gone."
+    page.driver.browser.manage.window.resize_to(1100, 800)
+    assert_selector ".redpen-pin", count: 3
+    assert_selector ".redpen-orphans[data-populated] .redpen-note", text: "Gone."
+  end
+
   test "a fragment that names an element is a scroll position, not part of where a note is" do
     visit page_path("about", anchor: "page")
     page.refresh # from /pages/about, a visit that differs only in its fragment loads nothing
