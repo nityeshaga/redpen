@@ -38,7 +38,7 @@ module Redpen
       end
 
       def note_params
-        params.expect(note: %i[ path selector snippet body ])
+        params.expect(note: %i[ path selector snippet fragment body ])
       end
   end
 end

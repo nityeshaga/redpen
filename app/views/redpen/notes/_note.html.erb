@@ -1,7 +1,7 @@
 <%# One note: the popover a pin opens, and the row an orphan shows as. The selector and
     snippet on the element are what the controller pins by: the DOM attribute is the state. %>
 <li id="<%= dom_id note %>" class="redpen-note <%= "redpen-note--resolved" if note.resolved? %>"
-    data-redpen-target="note" data-note-selector="<%= note.selector %>" data-note-snippet="<%= note.snippet %>"
+    data-redpen-target="note" data-note-selector="<%= note.selector %>" data-note-snippet="<%= note.snippet %>" data-note-fragment="<%= note.fragment %>"
     data-action="click->redpen#stop">
   <div class="redpen-note__head">
     <span class="redpen-note__number"></span>

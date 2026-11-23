@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 — 2026-11-23
+
+**Notes on pages that route in the fragment.** A slide deck at `/deck/#/tcp/4` is many pages on one path, and the server never sees which: every note on it was stored against `/deck/`, and every slide showed every pin. The pen now sends the fragment with the note (`redpen_notes.fragment`, null for ordinary pages) and pins a note only while the page is at it. A fragment that names an element (`#footnotes`) is a scroll position and is not recorded. Pins are re-measured when the fragment changes, including by `history.replaceState`, and again when an entrance animation ends. `Note#location` is the path with its fragment, for hosts that link back to a note. Found on nityesh.com's explorables.
+
+**Upgrading:** `bin/rails redpen:install:migrations && bin/rails db:migrate`. A host that copied the views with `redpen:views` should add the hidden `fragment` field to `_form.html.erb` and `data-note-fragment` to `_note.html.erb`; without them the pen behaves as it did in 0.1.
+
 ## 0.1.2 — 2026-09-18
 
 **Security.** `NotesController` asked `Redpen.annotatable` about `params[:path]` whenever the query named one, while `create` wrote the note to `note[path]` and `destroy` removed whatever note the id named. A signed-in author allowed on any one page could therefore add a note to, or delete a note from, a page they may not pen, by naming their own page in the query. The gate now asks about the page the request actually touches: the query's path for the index, the note's own path for create and destroy. Resolving and reopening were never affected. Found reviewing Curated Connections' landing pages.

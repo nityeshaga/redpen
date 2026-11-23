@@ -27,3 +27,11 @@ private:
   selector: "#page > h1"
   snippet: "Page private"
   body: "Nobody may see this through the pen."
+
+slide_two:
+  author: nityesh (User)
+  path: /documents/deck
+  fragment: "#/two"
+  selector: "#slide > p:nth-of-type(1)"
+  snippet: "The second slide of the deck says that."
+  body: "Say it shorter."

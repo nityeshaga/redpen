@@ -27,6 +27,20 @@ class Redpen::NoteTest < ActiveSupport::TestCase
     assert_not note.valid?, "a path must start at the site root"
   end
 
+  test "a fragment is kept as the page spelled it; a blank one is no fragment" do
+    note = Redpen::Note.new(author: users(:nityesh), path: "/documents/deck", selector: "body", body: "x", fragment: "")
+    assert note.valid?
+    assert_nil note.fragment
+    assert_equal "/documents/deck", note.location
+
+    note.fragment = "#/tcp/4"
+    assert note.valid?
+    assert_equal "/documents/deck#/tcp/4", note.location
+
+    note.fragment = "tcp/4"
+    assert_not note.valid?, "a fragment starts with its #"
+  end
+
   test "the author defaults to whoever holds the pen" do
     Redpen::Current.author = users(:piyush)
     note = Redpen::Note.create!(path: "/pages/about", selector: "body", body: "Page-level.")

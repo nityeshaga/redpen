@@ -6,19 +6,28 @@
 // captures a clicked element into two hidden fields, and submits a form. Everything the
 // server needs travels in the form; everything the page needs to show comes back as HTML.
 // Pin coordinates are never stored. They're measured from the element on every pin().
+//
+// A page that routes in its fragment (a slide deck at #/tcp/4) is many pages on one path.
+// A note taken there carries the fragment, and is pinned only while the page is at it.
 import "@hotwired/turbo-rails"
 import { Application, Controller } from "@hotwired/stimulus"
 
 class RedpenController extends Controller {
   static targets = [ "toggle", "toggleLabel", "highlight", "layer", "notes", "note", "orphans",
-                     "composer", "composerTarget", "selector", "snippet", "body" ]
+                     "composer", "composerTarget", "selector", "snippet", "fragment", "body" ]
 
   connect() {
     this.hover = this.hover.bind(this)
     this.capture = this.capture.bind(this)
+    // history.replaceState moves the fragment without an event, but a router that calls it
+    // has just redrawn the page, so the redraw is the event.
+    this.pinnedAt = this.fragment
+    this.redraws = new MutationObserver(() => { if (this.fragment !== this.pinnedAt) this.pin() })
+    this.redraws.observe(document.body, { childList: true, subtree: true })
   }
 
   disconnect() {
+    this.redraws.disconnect()
     this.deactivate()
   }
 
@@ -30,8 +39,10 @@ class RedpenController extends Controller {
     const orphanList = this.orphansTarget.querySelector("ol")
     orphanList.replaceChildren()
 
+    this.pinnedAt = this.fragment
     let number = 0
     for (const note of this.noteTargets) {
+      if (!this.here(note)) { this.notesTarget.appendChild(note); note.removeAttribute("data-open"); continue }
       const element = this.resolve(note.dataset.noteSelector, note.dataset.noteSnippet)
       note.querySelector(".redpen-note__number").textContent = ++number
       if (element) {
@@ -56,6 +67,11 @@ class RedpenController extends Controller {
     pin.style.top = `${y - 12}px`
     pin.addEventListener("click", event => { event.stopPropagation(); this.open(note, pin) })
     return pin
+  }
+
+  // A note with no fragment belongs to the whole path; one with a fragment, to that view of it.
+  here(note) {
+    return !note.dataset.noteFragment || note.dataset.noteFragment === this.fragment
   }
 
   // The selector first. When the page has been rewritten under the note, the snippet:
@@ -121,6 +137,7 @@ class RedpenController extends Controller {
     const snippet = this.textOf(element).slice(0, 120)
     this.selectorTarget.value = this.cssPath(element)
     this.snippetTarget.value = snippet
+    if (this.hasFragmentTarget) this.fragmentTarget.value = this.fragment
     this.composerTargetTarget.textContent = snippet || `<${element.tagName.toLowerCase()}>`
     this.bodyTarget.value = ""
     this.place(this.composerTarget, event.clientX + 12, event.clientY + 12)
@@ -170,6 +187,17 @@ class RedpenController extends Controller {
     const { x, y } = this.documentPoint({ left: clientLeft, top: clientTop })
     box.style.left = `${x}px`
     box.style.top = `${y}px`
+  }
+
+  // ---- fragment ---------------------------------------------------------------------
+
+  // A fragment that names an element is a scroll position on the one page: no part of
+  // where a note is. A fragment that names nothing is the page's own router: #/tcp/4.
+  get fragment() {
+    const hash = location.hash
+    if (hash.length < 2) return ""
+    try { if (document.getElementById(decodeURIComponent(hash.slice(1)))) return "" } catch {}
+    return hash
   }
 
   // ---- text and selector ------------------------------------------------------------

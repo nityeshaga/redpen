@@ -9,7 +9,25 @@ class DocumentsController < ApplicationController
       <html><head><title>Verbatim</title></head>
       <BODY><main id="doc"><h1>A stored document</h1><p>Served byte for byte to readers.</p></main></BODY></html>
     HTML
-    "bare" => "<p>A fragment with no body tag at all.</p>"
+    "bare" => "<p>A fragment with no body tag at all.</p>",
+    # Two slides on one path, routed in the fragment the way a deck engine does it:
+    # redraw, then history.replaceState, which fires no event.
+    "deck" => <<~HTML
+      <!DOCTYPE html>
+      <html><head><title>Deck</title></head>
+      <body style="min-height: 100vh; margin: 0"><main id="slide"></main><button id="next" style="position: fixed; left: 8px; bottom: 8px">Next</button>
+      <script>
+        const slides = { one: "<h1>Slide one</h1><p>The first slide of the deck says this.</p>",
+                         two: "<h1>Slide two</h1><p>The second slide of the deck says that.</p>" }
+        function show(name) {
+          document.getElementById("slide").innerHTML = slides[name]
+          history.replaceState(null, "", location.pathname + "#/" + name)
+        }
+        document.getElementById("next").addEventListener("click", () => show(location.hash === "#/one" ? "two" : "one"))
+        show(location.hash === "#/two" ? "two" : "one")
+      </script>
+      </body></html>
+    HTML
   }
 
   def show

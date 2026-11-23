@@ -54,6 +54,45 @@ class PenTest < ApplicationSystemTestCase
     assert_equal "body", find("input[name='note[selector]']", visible: false).value
   end
 
+  test "on a page that routes in its fragment, a note is taken on one slide and pinned only there" do
+    visit document_path("deck")
+    assert_selector "h1", text: "Slide one"
+    assert_no_selector ".redpen-pin"
+    assert_no_selector ".redpen-orphans[data-populated]"
+
+    click_button "Red pen"
+    find("#slide p").click
+    fill_in "note[body]", with: "Open with the question."
+    click_button "Save"
+    assert_selector ".redpen-pin", count: 1
+    assert_equal "#/one", Redpen::Note.last.fragment
+
+    click_button "Next"
+    assert_selector "h1", text: "Slide two"
+    assert_selector ".redpen-pin", count: 1
+    find(".redpen-pin").click
+    assert_selector ".redpen-note[data-open]", text: "Say it shorter."
+
+    click_button "Next"
+    assert_selector "h1", text: "Slide one"
+    assert_selector ".redpen-pin", count: 1
+    assert_no_selector ".redpen-note[data-open]"
+    find(".redpen-pin").click
+    assert_selector ".redpen-note[data-open]", text: "Open with the question."
+  end
+
+  test "a fragment that names an element is a scroll position, not part of where a note is" do
+    visit page_path("about", anchor: "page")
+    page.refresh # from /pages/about, a visit that differs only in its fragment loads nothing
+    assert_selector ".redpen-pin", count: 3
+    click_button "Red pen"
+    find("#page p.intro").click
+    fill_in "note[body]", with: "Still the whole page."
+    click_button "Save"
+    assert_selector ".redpen-pin", count: 4
+    assert_nil Redpen::Note.last.fragment
+  end
+
   private
     def send_keys(*keys) = page.driver.browser.action.send_keys(*keys).perform
 end

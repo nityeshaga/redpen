@@ -70,6 +70,10 @@ Every colour and font is a CSS variable (`--rp-paper`, `--rp-red`, `--rp-mono`, 
 
 A pin follows its selector, and the selector short-circuits at the nearest ancestor with an `id`. If a generator stamps ids on block elements and preserves them on revision, pins survive a full rewrite. When a selector no longer matches, the snippet re-anchors the note to the same kind of element whose text still starts the same way. When nothing matches, the note lands in an "Element gone" panel with its snippet, still readable and resolvable.
 
+## Pages that route in the fragment
+
+A slide deck or a single-page app at `/deck/#/tcp/4` is many pages on one path. The pen records the fragment with the note (`note.fragment`, and `note.location` for the path with it) and pins the note only while the page is at that fragment. A fragment that names an element on the page, like `#footnotes`, is a scroll position and is not recorded. Nothing to configure.
+
 ## Requirements and non-goals
 
 Rails 8.0+, import maps (importmap-rails), Turbo and Stimulus. Sprockets and Propshaft both work. Not in v1: esbuild/webpack hosts, threads on notes, visitor comments, generating or hosting pages.

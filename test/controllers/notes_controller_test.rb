@@ -52,6 +52,16 @@ class Redpen::NotesControllerTest < ActionDispatch::IntegrationTest
     assert_equal users(:nityesh), Redpen::Note.last.author
   end
 
+  test "create keeps the fragment the pen sent, and the rail hands it back on the note" do
+    post redpen.notes_url, params: { note: { path: "/documents/deck", fragment: "#/one", selector: "#slide > h1", snippet: "Slide one", body: "Shorter." } }
+    assert_equal "#/one", Redpen::Note.last.fragment
+
+    get redpen.notes_url(path: "/documents/deck")
+    assert_select "li[data-note-fragment='#/one']", text: /Shorter\./
+    assert_select "li[data-note-fragment='#/two']", text: /Say it shorter\./
+    assert_select "form.redpen-composer input[name='note[fragment]']"
+  end
+
   test "an invalid note is a bug in our own form, so it raises rather than vanishing" do
     assert_no_difference -> { Redpen::Note.count } do
       post redpen.notes_url, params: { note: { path: "/pages/about", selector: "#page > h1", body: "" } }

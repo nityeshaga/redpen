@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_15_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_23_000001) do
   create_table "redpen_notes", force: :cascade do |t|
     t.integer "author_id", null: false
     t.string "author_type", null: false
     t.text "body", null: false
     t.datetime "created_at", null: false
+    t.string "fragment"
     t.string "path", null: false
     t.text "resolution"
     t.datetime "resolved_at"

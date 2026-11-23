@@ -5,5 +5,5 @@
 <%= javascript_import_module_tag "redpen" %>
 <turbo-frame id="redpen_notes" src="<%= redpen.notes_path(path: path) %>" class="redpen"
              data-controller="redpen"
-             data-action="turbo:frame-load->redpen#pin resize@window->redpen#pin keydown@document->redpen#keydown">
+             data-action="turbo:frame-load->redpen#pin resize@window->redpen#pin hashchange@window->redpen#pin animationend@document->redpen#pin keydown@document->redpen#keydown">
 </turbo-frame>
